@@ -1,41 +1,88 @@
 #include <stdio.h>
 
+// Constantes para tamanho do tabuleiro e valores 
 #define TAM 10
 #define VALOR_AGUA 0
 #define VALOR_NAVIO 3
+#define TAM_NAVIO 3
 
 int main() {
+    // Declara e inicializa o tabuleiro 10x10 com água (valor 0)
     int tabuleiro[TAM][TAM] = {0};
 
-    // 1. Navio horizontal em E2, F2, G2
-    int linhaH = 1;    // Linha 2 (índice 1)
-    int colunaH = 4;   // Coluna E (índice 4)
-    for (int i = 0; i < 3; i++) {
-        tabuleiro[linhaH][colunaH + i] = VALOR_NAVIO;
+    // Verificar se uma posição está livre (sem navio)
+    #define POSICAO_LIVRE(i, j) (tabuleiro[i][j] == VALOR_AGUA)
+
+    int pode_posicionar = 1; // Variável auxiliar para verificar se é possível posicionar um navio
+
+
+    // 1. Posiciona navio horizontal (E2, F2, G2)
+    int linhaH = 1;        // Linha 2 (indice 1)
+    int colunaH = 4;       // Coluna E (indice 4)
+    pode_posicionar = 1;
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        if (!POSICAO_LIVRE(linhaH, colunaH + i)) pode_posicionar = 0;
+    }
+    if (pode_posicionar && colunaH + TAM_NAVIO <= TAM) {
+        for (int i = 0; i < TAM_NAVIO; i++) {
+            tabuleiro[linhaH][colunaH + i] = VALOR_NAVIO;
+        }
     }
 
-    // 2. Navio vertical em B5, B6, B7
-    int linhaV = 4;    // Linha 5 (índice 4)
-    int colunaV = 1;   // Coluna B (índice 1)
-    for (int i = 0; i < 3; i++) {
-        tabuleiro[linhaV + i][colunaV] = VALOR_NAVIO;
+    
+    // 2. Posiciona navio vertical (B5, B6, B7)
+    int linhaV = 4;        // Linha 5 (indice 4)
+    int colunaV = 1;       // Coluna B (indice 1)
+    pode_posicionar = 1;
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        if (!POSICAO_LIVRE(linhaV + i, colunaV)) pode_posicionar = 0;
+    }
+    if (pode_posicionar && linhaV + TAM_NAVIO <= TAM) {
+        for (int i = 0; i < TAM_NAVIO; i++) {
+            tabuleiro[linhaV + i][colunaV] = VALOR_NAVIO;
+        }
     }
 
-    // Exibindo o título
+    
+    // 3. Posiciona navio diagonal principal (0,0), (1,1), (2,2)
+    pode_posicionar = 1;
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        if (!POSICAO_LIVRE(i, i)) pode_posicionar = 0;
+    }
+    if (pode_posicionar) {
+        for (int i = 0; i < TAM_NAVIO; i++) {
+            tabuleiro[i][i] = VALOR_NAVIO;
+        }
+    }
+
+    
+    // 4. Posiciona navio diagonal secundária (0,9), (1,8), (2,7)
+    pode_posicionar = 1;
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        if (!POSICAO_LIVRE(i, 9 - i)) pode_posicionar = 0;
+    }
+    if (pode_posicionar) {
+        for (int i = 0; i < TAM_NAVIO; i++) {
+            tabuleiro[i][9 - i] = VALOR_NAVIO;
+        }
+    }
+
+    
+    // Exibição do tabuleiro 
     printf("TABULEIRO BATALHA NAVAL\n");
 
-    // Exibindo as letras das colunas A-J
-    printf("    "); // Espaço para alinhar com os números das linhas
+    // Impressão das letras das colunas (A a J)
+    printf("    "); // Espaço inicial para alinhar com as linhas
     for (char letra = 'A'; letra < 'A' + TAM; letra++) {
         printf(" %c", letra);
     }
     printf("\n");
 
-    // Exibindo o tabuleiro com linha numerada
+    // Impressão de cada linha numerada (1 a 10)
     for (int i = 0; i < TAM; i++) {
-        printf("%2d  ", i + 1); // Alinhamento adequado (ex: "10  ")
+        printf("%2d  ", i + 1); // Número da linha
         for (int j = 0; j < TAM; j++) {
-            printf(" %d", tabuleiro[i][j]);
+            printf(" %d", tabuleiro[i][j]); // Valor da célula: 0 (agua) ou 3 (navio)
         }
         printf("\n");
     }
